@@ -1,0 +1,139 @@
+<?php
+
+namespace app\index\controller;
+
+use think\Controller;
+use think\Request;
+use think\JWT;
+class Users extends Controller
+{
+    /**
+     * 显示资源列表
+     *
+     * @return \think\Response
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * 显示创建资源表单页.
+     *
+     * @return \think\Response
+     */
+    public function create()
+    {
+        //
+    }
+
+    /**
+     * 保存新建的资源
+     *
+     * @param  \think\Request  $request
+     * @return \think\Response
+     */
+    public function save(Request $request)
+    {
+        $data = $this->request->post();
+        try {
+            $model = model('Users');
+            $result = $model->queryusers(['tel' => $data['tel']]);
+            if (count($result) > 0) {
+                return json([
+                    'code' => config('code.fail'),
+                    'msg' => '该手机号已注册'
+                ]);
+            }
+            $result = $model->queryusers(['nickname' => $data['nickname']]);
+            if (count($result) > 0) {
+                return json([
+                    'code' => config('code.fail'),
+                    'msg' => '该用户名已注册'
+                ]);
+            }
+            $data['password'] = md5(crypt($data['password'], config('salt')));
+            $result = $model->insert($data);
+            if ($result) {
+                return json([
+                    'code' => config('code.success'),
+                    'msg' => '用户注册成功'
+                ]);
+            } else {
+                return json([
+                    'code' => config('code.fail'),
+                    'msg' => '用户注册失败'
+                ]);
+            }
+        }catch (Exception $exception){
+            return json([
+                'code'=>config('code.fail'),
+                'msg' => '网络连接错误',
+            ]);
+        }
+    }
+
+    /**
+     * 显示指定的资源
+     *
+     * @param  int  $id
+     * @return \think\Response
+     */
+    public function read($id)
+    {
+       /* //
+        checkToken();
+        $uid=$this->request->id;
+        $nickname=$this->request->nackname;
+        $model=model('Users');
+        $users=$model->queryone($uid);
+        $users['sexname']=SexCodeToText($users->sex);
+
+        if ($users){
+            return json([
+                'code'=>config('code.success'),
+                'msg'=>'用户信息获取成功',
+                'data'=>$users
+            ]);
+        }else{
+            return json([
+                'code'=>config('code.fail'),
+                'msg'=>'用户信息获取失败'
+            ]);
+        }*/
+    }
+
+    /**
+     * 显示编辑资源表单页.
+     *
+     * @param  int  $id
+     * @return \think\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * 保存更新的资源
+     *
+     * @param  \think\Request  $request
+     * @param  int  $id
+     * @return \think\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * 删除指定资源
+     *
+     * @param  int  $id
+     * @return \think\Response
+     */
+    public function delete($id)
+    {
+        //
+    }
+}
